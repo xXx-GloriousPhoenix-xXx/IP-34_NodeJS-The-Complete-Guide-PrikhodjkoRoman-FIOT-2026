@@ -1,12 +1,29 @@
-const Sequelize = require('sequelize');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
 
-const sequelize = new Sequelize('postgres', 'postgres.vcwvpwqmdrvukszkfnkk', 'AbcaBcabC#123', {
-  dialect: 'postgres',
-  host: 'aws-0-eu-west-1.pooler.supabase.com',
-  port: 6543,
-  dialectOptions: {
-    ssl: { rejectUnauthorized: false }
+let _db;
+
+const mongoConnect = callback => {
+  MongoClient.connect(
+    'mongodb+srv://defaultUser:abcd123%21@prikhodjkoromanip34clus.aftawgg.mongodb.net/?appName=PrikhodjkoRomanIP34Cluster'
+  )
+    .then(client => {
+      console.log('Connected!');
+      _db = client.db();
+      callback();
+    })
+    .catch(err => {
+      console.log(err);
+      throw err;
+    });
+};
+
+const getDb = () => {
+  if (_db) {
+    return _db;
   }
-});
+  throw 'No database found!';
+};
 
-module.exports = sequelize;
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
