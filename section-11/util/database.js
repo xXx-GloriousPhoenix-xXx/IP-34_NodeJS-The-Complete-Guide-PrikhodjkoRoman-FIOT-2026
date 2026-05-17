@@ -1,14 +1,12 @@
-const { Pool } = require('pg');
+const Sequelize = require('sequelize');
 
-const pool = new Pool({
-    host: 'aws-0-eu-west-1.pooler.supabase.com',
-    user: 'postgres.vcwvpwqmdrvukszkfnkk',
-    database: 'postgres',
-    password: 'AbcaBcabC#123',
-    port: 6543,
+const sequelize = new Sequelize('postgres', 'postgres.vcwvpwqmdrvukszkfnkk', 'AbcaBcabC#123', {
+  dialect: 'postgres',
+  host: 'aws-0-eu-west-1.pooler.supabase.com',
+  port: 6543,
+  dialectOptions: {
     ssl: { rejectUnauthorized: false }
+  }
 });
 
-module.exports = {
-    execute: (sql, params) => pool.query(sql, params)
-};
+module.exports = sequelize;

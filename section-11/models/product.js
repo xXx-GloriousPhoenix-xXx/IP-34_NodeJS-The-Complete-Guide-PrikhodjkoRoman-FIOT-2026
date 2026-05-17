@@ -1,36 +1,27 @@
-const db = require('../util/database');
+const Sequelize = require('sequelize');
 
-module.exports = class Product {
-  constructor(id, title, imageUrl, description, price) {
-    this.id = id;
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
-  }
+const sequelize = require('../util/database');
 
-  save() {
-    if (this.id) {
-      return db.execute(
-        'UPDATE products SET title=$1, price=$2, "imageUrl"=$3, description=$4 WHERE id=$5',
-        [this.title, this.price, this.imageUrl, this.description, this.id]
-      );
-    }
-    return db.execute(
-      'INSERT INTO products (title, price, "imageUrl", description) VALUES ($1, $2, $3, $4)',
-      [this.title, this.price, this.imageUrl, this.description]
-    );
+const Product = sequelize.define('product', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  title: Sequelize.STRING,
+  price: {
+    type: Sequelize.DOUBLE,
+    allowNull: false
+  },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: false
   }
+});
 
-  static deleteById(id) {
-    return db.execute('DELETE FROM products WHERE id=$1', [id]);
-  }
-
-  static fetchAll() {
-    return db.execute('SELECT * FROM products');
-  }
-
-  static findById(id) {
-    return db.execute('SELECT * FROM products WHERE id=$1', [id]);
-  }
-};
+module.exports = Product;
