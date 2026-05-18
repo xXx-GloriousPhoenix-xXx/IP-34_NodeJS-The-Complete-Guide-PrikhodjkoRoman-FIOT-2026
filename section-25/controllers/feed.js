@@ -82,7 +82,7 @@ exports.createPost = (req, res, next) => {
 
 exports.getPost = (req, res, next) => {
   const postId = req.params.postId;
-  Post.findById(postId)
+  Post.findByPk(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -118,7 +118,7 @@ exports.updatePost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  Post.findById(postId)
+  Post.findByPk(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -151,7 +151,7 @@ exports.updatePost = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
   const postId = req.params.postId;
-  Post.findById(postId)
+  Post.findByPk(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -165,10 +165,10 @@ exports.deletePost = (req, res, next) => {
       }
       // Check logged in user
       clearImage(post.imageUrl);
-      return Post.findByIdAndRemove(postId);
+      return Post.findByPkAndRemove(postId);
     })
     .then(result => {
-      return User.findById(req.userId);
+      return User.findByPk(req.userId);
     })
     .then(user => {
       user.posts.pull(postId);
