@@ -75,7 +75,7 @@ exports.login = (req, res, next) => {
 };
 
 exports.getUserStatus = (req, res, next) => {
-  User.findByPk(req.userId)
+  User.findById(req.userId)
     .then(user => {
       if (!user) {
         const error = new Error('User not found.');
@@ -94,7 +94,7 @@ exports.getUserStatus = (req, res, next) => {
 
 exports.updateUserStatus = (req, res, next) => {
   const newStatus = req.body.status;
-  User.findByPk(req.userId)
+  User.findById(req.userId)
     .then(user => {
       if (!user) {
         const error = new Error('User not found.');

@@ -45,7 +45,7 @@ exports.createPost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  const imageUrl = req.file.path;
+  const imageUrl = req.file.path.replace(/\\/g, '/');
   const title = req.body.title;
   const content = req.body.content;
   let creator;
@@ -58,7 +58,7 @@ exports.createPost = (req, res, next) => {
   post
     .save()
     .then(result => {
-      return User.findByPk(req.userId);
+      return User.findById(req.userId);
     })
     .then(user => {
       creator = user;
@@ -82,7 +82,7 @@ exports.createPost = (req, res, next) => {
 
 exports.getPost = (req, res, next) => {
   const postId = req.params.postId;
-  Post.findByPk(postId)
+  Post.findById(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -111,14 +111,14 @@ exports.updatePost = (req, res, next) => {
   const content = req.body.content;
   let imageUrl = req.body.image;
   if (req.file) {
-    imageUrl = req.file.path;
+    imageUrl = req.file.path.replace(/\\/g, '/');
   }
   if (!imageUrl) {
     const error = new Error('No file picked.');
     error.statusCode = 422;
     throw error;
   }
-  Post.findByPk(postId)
+  Post.findById(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -151,7 +151,7 @@ exports.updatePost = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
   const postId = req.params.postId;
-  Post.findByPk(postId)
+  Post.findById(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -165,10 +165,10 @@ exports.deletePost = (req, res, next) => {
       }
       // Check logged in user
       clearImage(post.imageUrl);
-      return Post.findByPkAndRemove(postId);
+      return Post.findByIdAndRemove(postId);
     })
     .then(result => {
-      return User.findByPk(req.userId);
+      return User.findById(req.userId);
     })
     .then(user => {
       user.posts.pull(postId);
