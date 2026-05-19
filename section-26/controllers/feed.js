@@ -6,31 +6,27 @@ const { validationResult } = require('express-validator');
 const Post = require('../models/post');
 const User = require('../models/user');
 
-exports.getPosts = (req, res, next) => {
+exports.getPosts = async (req, res, next) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
   let totalItems;
-  Post.find()
-    .countDocuments()
-    .then(count => {
-      totalItems = count;
-      return Post.find()
-        .skip((currentPage - 1) * perPage)
-        .limit(perPage);
-    })
-    .then(posts => {
-      res.status(200).json({
-        message: 'Fetched posts successfully.',
-        posts: posts,
-        totalItems: totalItems
-      });
-    })
-    .catch(err => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+  try {
+    const totalItems = await Post.find().countDocuments();
+    const posts = await Post.find()
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+
+    res.status(200).json({
+      message: 'Fetched posts successfully.',
+      posts: posts,
+      totalItems: totalItems
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 exports.createPost = (req, res, next) => {
@@ -58,7 +54,7 @@ exports.createPost = (req, res, next) => {
   post
     .save()
     .then(result => {
-      return User.findByPk(req.userId);
+      return User.findById(req.userId);
     })
     .then(user => {
       creator = user;
@@ -82,7 +78,7 @@ exports.createPost = (req, res, next) => {
 
 exports.getPost = (req, res, next) => {
   const postId = req.params.postId;
-  Post.findByPk(postId)
+  Post.findById(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -118,7 +114,7 @@ exports.updatePost = (req, res, next) => {
     error.statusCode = 422;
     throw error;
   }
-  Post.findByPk(postId)
+  Post.findById(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -151,7 +147,7 @@ exports.updatePost = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => {
   const postId = req.params.postId;
-  Post.findByPk(postId)
+  Post.findById(postId)
     .then(post => {
       if (!post) {
         const error = new Error('Could not find post.');
@@ -165,10 +161,10 @@ exports.deletePost = (req, res, next) => {
       }
       // Check logged in user
       clearImage(post.imageUrl);
-      return Post.findByPkAndRemove(postId);
+      return Post.findByIdAndRemove(postId);
     })
     .then(result => {
-      return User.findByPk(req.userId);
+      return User.findById(req.userId);
     })
     .then(user => {
       user.posts.pull(postId);
