@@ -1,0 +1,9 @@
+{
+    "env": {
+        "MONGO_USER": "defaultUser",
+        "MONGO_PASSWORD": "abcd123!",
+        "MONGO_DEFAULT_DATABASE": "shop",
+        "MONGO_CLUSTER": "prikhodjkoromanip34clus.aftawgg.mongodb.net",
+        "STRIPE_KEY": "sk_test_51TYR8Q3Uad0z3GwWSQzFTOV3TTI5STlrUmVEidIIV6mhTHhe4ErSOheHC01tAUGNftxrdxVLoLeJ9jKPqlxuh22l00juRCRTpF"
+    }
+}
