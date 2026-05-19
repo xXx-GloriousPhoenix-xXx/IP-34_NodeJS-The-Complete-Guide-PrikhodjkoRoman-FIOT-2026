@@ -3,17 +3,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import './Todos.css';
 
 const Todos = () => {
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
   const [todos, setTodos] = useState([]);
   const [editedTodo, setEditedTodo] = useState();
   const [enteredText, setEnteredText] = useState('');
 
   const getTodos = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:8000/todos');
+      const response = await fetch(`${API_URL}/todos`);
       const todosData = await response.json();
       setTodos(todosData.todos);
     } catch (err) {
-      // Error handling would be implemented here
       console.log(err);
     }
   }, []);
@@ -33,7 +33,7 @@ const Todos = () => {
   };
 
   const deleteTodoHandler = async (todoId) => {
-    const response = await fetch('http://localhost:8000/todos/' + todoId, {
+    const response = await fetch(`${API_URL}/todos/${todoId}`, {
       method: 'DELETE',
     });
     const data = await response.json();
@@ -50,7 +50,7 @@ const Todos = () => {
     event.preventDefault();
     setEditedTodo(null);
     setEnteredText('');
-    let url = 'http://localhost:8000/todos';
+    let url = `${API_URL}/todos`;
     let method = 'POST';
     if (editedTodo) {
       url = url + '/' + editedTodo.id;
